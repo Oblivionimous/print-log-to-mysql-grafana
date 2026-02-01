@@ -58,6 +58,8 @@ Visualizador de Eventos
         └── Windows
             └── PrintService
 ```
+<img width="494" height="304" alt="image" src="https://github.com/user-attachments/assets/e45de9b6-ec21-4aa6-8ddd-c34dbd4476b2" />
+<img width="270" height="76" alt="image" src="https://github.com/user-attachments/assets/d3ea7caa-6281-4441-9786-3867a5cd06cc" />
 
 ---
 
@@ -67,6 +69,7 @@ Visualizador de Eventos
 - Selecione **Habilitar Log**
 
 Após habilitado, o ícone ficará ativo e o Windows começará a registrar eventos de impressão.
+<img width="881" height="589" alt="image" src="https://github.com/user-attachments/assets/0e162948-b9dd-4c37-bad6-4e0e69ebc125" />
 
 ---
 
