@@ -59,6 +59,7 @@ Visualizador de Eventos
             └── PrintService
 ```
 <img width="494" height="304" alt="image" src="https://github.com/user-attachments/assets/e45de9b6-ec21-4aa6-8ddd-c34dbd4476b2" />
+
 <img width="270" height="76" alt="image" src="https://github.com/user-attachments/assets/d3ea7caa-6281-4441-9786-3867a5cd06cc" />
 
 ---
@@ -88,6 +89,7 @@ Informações disponíveis:
 - Computador de origem
 
 Este é o evento utilizado para integração com PowerShell e banco de dados.
+<img width="600" height="438" alt="image" src="https://github.com/user-attachments/assets/0c973876-55ff-48e2-830d-95fbbea89251" />
 
 ---
 
@@ -108,6 +110,7 @@ Este é o evento utilizado para integração com PowerShell e banco de dados.
 3. Clique no evento e valide os dados exibidos
 
 Se o evento aparecer, o log está funcionando corretamente.
+<img width="446" height="296" alt="image" src="https://github.com/user-attachments/assets/6543e83a-7ea6-477a-89da-d272e697239b" />
 
 ---
 
