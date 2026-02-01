@@ -132,7 +132,9 @@ Recomendações:
 - ❌ Desmarcar:
   - “Iniciar a tarefa somente se o computador estiver em energia AC” (se for servidor)
 - ❌ Desmarcar:
-  - “Parar se o computador mudar para bateria” (caso apareça)
+  - “Parar se o computador mudar para bateria” (caso apareça) 
+    
+<img width="637" height="486" alt="image" src="https://github.com/user-attachments/assets/90b5f4a2-85ef-4a2b-87fc-d150a388bd56" />
 
 ---
 
@@ -149,6 +151,8 @@ Desmarcar:
 
 - ❌ Parar a tarefa se ela for executada por mais de:
   - (o script deve ser rápido e finalizar sozinho)
+
+<img width="633" height="482" alt="image" src="https://github.com/user-attachments/assets/66ee9502-450d-424b-8b26-343e786af142" />
 
 ---
 
