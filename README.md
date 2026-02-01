@@ -16,6 +16,9 @@ Centralizar os eventos de impressão do Windows — principalmente o **Event ID 
 - Controle operacional e de custos
 - Visualização em dashboards Grafana
 
+<img width="1546" height="553" alt="image" src="https://github.com/user-attachments/assets/8dd472dc-8af5-4ddf-a876-2409fba8367b" />
+
+
 ---
 
 ## 🧩 Arquitetura da Solução
@@ -113,7 +116,7 @@ Servidor-de-logs-de-impressao-Mysql-Grafana/
   ```
   mysql-connector-net-8.1.0.msi
   ```
-
+https://downloads.mysql.com/archives/c-net/
 ---
 
 ## 📜 Scripts PowerShell
@@ -162,6 +165,7 @@ A pasta `Dashboard/` contém ou destina-se a conter:
 - Impressões por impressora
 - Análise temporal (dia, mês, ano)
 
+<img width="1905" height="914" alt="image" src="https://github.com/user-attachments/assets/be1654f8-22a3-4dc7-9e1c-b56f7dd94c12" />
 ---
 
 ## ⏱️ Execução e Automação
@@ -171,6 +175,8 @@ Os scripts podem ser executados via:
 - Agendador de Tarefas do Windows
 - Execução manual
 - Trigger automático baseado em evento do Windows
+
+<img width="633" height="481" alt="image" src="https://github.com/user-attachments/assets/637f891b-eb18-4c30-924a-a665939893d5" />
 
 ---
 
