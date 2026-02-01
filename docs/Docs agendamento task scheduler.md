@@ -71,7 +71,7 @@ Configure:
 - **Configurar para:**  
   - Windows Server (versão correspondente)
 <br>
-<img width="4480" height="1080" alt="image" src="https://github.com/user-attachments/assets/4fad4f5e-42fc-4ac2-835b-325efcc30719" />
+<img width="632" height="486" alt="image" src="https://github.com/user-attachments/assets/e4fe9378-66ac-427f-8d12-9569ef50d8ee" />
 
 ---
 
