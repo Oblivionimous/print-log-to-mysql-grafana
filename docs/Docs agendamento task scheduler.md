@@ -70,6 +70,8 @@ Configure:
   - ☑ Executar com privilégios mais altos
 - **Configurar para:**  
   - Windows Server (versão correspondente)
+<br>
+<img width="4480" height="1080" alt="image" src="https://github.com/user-attachments/assets/4fad4f5e-42fc-4ac2-835b-325efcc30719" />
 
 ---
 
@@ -83,6 +85,10 @@ Clique em **Novo…**
 - **Configurações:**
   - Diariamente
   - Hora inicial: `00:00`
+ <img width="627" height="518" alt="image" src="https://github.com/user-attachments/assets/fc48f7ff-65d9-4386-995b-85b595268ea9" />
+<br>
+<img width="623" height="515" alt="image" src="https://github.com/user-attachments/assets/0ca6969e-76c4-4378-82ef-26203572b228" />
+
 - **Configurações avançadas:**
   - ☑ Repetir a tarefa a cada: `5 minutos`
   - Por uma duração de: `Indefinidamente`
