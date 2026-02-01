@@ -1,17 +1,20 @@
-# Criação do Banco de Dados MySQL para Logs de Impressão
+# Criação e Estrutura do Banco de Dados MySQL – Logs de Impressão
 
-Este documento descreve o **passo a passo para criação e configuração do banco de dados MySQL** utilizado para armazenar os logs de impressão coletados do Windows (Event ID 307).
+Este documento descreve a **estrutura real do banco de dados MySQL** utilizada no projeto **Print Log to MySQL + Grafana**, já **alinhada com a tabela existente em produção/lab** (`printlog`).
+
+> ⚠️ Importante: este documento **não propõe recriação do banco em produção**.  
+> Ele serve como **documentação técnica versionada** e referência para ambientes de laboratório.
 
 ---
 
 ## 🎯 Objetivo
 
-Disponibilizar uma estrutura de banco de dados confiável para:
+Armazenar eventos de impressão do Windows (principalmente **Event ID 307**) coletados via PowerShell, possibilitando:
 
-- Armazenar logs de impressão do Windows
-- Permitir consultas SQL
-- Integrar com dashboards Grafana
-- Manter histórico de auditoria
+- Auditoria de impressões
+- Análise histórica
+- Dashboards no Grafana
+- Controle de volume por usuário, impressora e período
 
 ---
 
@@ -19,180 +22,153 @@ Disponibilizar uma estrutura de banco de dados confiável para:
 
 ```
 Windows Print Server
- └─ PowerShell
-     └─ MySQL
-         └─ Grafana / Relatórios
+ └─ Event Viewer (PrintService)
+     └─ PowerShell
+         └─ MySQL (printlog)
+             └─ Grafana
 ```
 
 ---
 
-## 🔧 Pré-requisitos
+## 📌 Banco de Dados
 
-- MySQL Server 5.7+ ou MySQL 8.x
-- Usuário com permissão administrativa no MySQL
-- Acesso ao servidor MySQL via terminal ou MySQL Workbench
+### Nome do banco
+```sql
+printlog
+```
+
+### Charset e Collation
+- Charset: `utf8mb4`
+- Collation: `utf8mb4_unicode_ci`
 
 ---
 
-## 1️⃣ Criação do Banco de Dados
+## 🗄️ Tabela Principal
 
-Conecte-se ao MySQL:
-
-```bash
-mysql -u root -p
-```
-
-Crie o banco de dados:
-
+### Nome da tabela
 ```sql
-CREATE DATABASE print_logs
-CHARACTER SET utf8mb4
-COLLATE utf8mb4_unicode_ci;
+printlog
 ```
+
+### Finalidade
+Armazenar cada evento de impressão registrado no Windows, com informações completas do job, usuário, impressora e estação.
 
 ---
 
-## 2️⃣ Criação do Usuário de Acesso
-
-Crie um usuário exclusivo para o projeto:
+## 📐 Estrutura Real da Tabela
 
 ```sql
-CREATE USER 'printlog_user'@'%' IDENTIFIED BY 'SenhaForteAqui';
-```
+CREATE TABLE printlog (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 
-> 🔐 Recomenda-se utilizar senha forte e, se possível, restringir o host (`localhost` ou IP específico).
+    address VARCHAR(45),
+    pagecount INT UNSIGNED,
+    jobbytes BIGINT UNSIGNED,
+    client VARCHAR(255),
+    eventid INT,
+    jobid BIGINT UNSIGNED,
+    timecreated DATETIME,
+    filename VARCHAR(512),
+    user VARCHAR(255),
+    printer VARCHAR(255),
+    totalpages INT UNSIGNED,
 
----
-
-## 3️⃣ Concessão de Permissões
-
-Conceda permissões apenas no banco do projeto:
-
-```sql
-GRANT SELECT, INSERT, UPDATE
-ON print_logs.*
-TO 'printlog_user'@'%';
-```
-
-Aplique as permissões:
-
-```sql
-FLUSH PRIVILEGES;
-```
-
----
-
-## 4️⃣ Selecionar o Banco de Dados
-
-```sql
-USE print_logs;
-```
-
----
-
-## 5️⃣ Criação da Tabela de Logs de Impressão
-
-Estrutura sugerida da tabela principal:
-
-```sql
-CREATE TABLE print_logs (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    event_time DATETIME NOT NULL,
-    user_name VARCHAR(255) NOT NULL,
-    printer_name VARCHAR(255) NOT NULL,
-    document_name VARCHAR(255),
-    pages INT DEFAULT 0,
-    computer_name VARCHAR(255),
-    job_id INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB;
+);
 ```
 
 ---
 
-## 6️⃣ Descrição dos Campos
+## 🧾 Descrição dos Campos
 
 | Campo | Descrição |
 |------|----------|
-| id | Identificador único do registro |
-| event_time | Data e hora do evento de impressão |
-| user_name | Usuário que realizou a impressão |
-| printer_name | Impressora utilizada |
-| document_name | Nome do documento impresso |
-| pages | Quantidade de páginas |
-| computer_name | Computador de origem |
-| job_id | ID do trabalho de impressão |
+| id | Identificador interno (auto_increment) |
+| address | Endereço/IP da impressora |
+| pagecount | Quantidade de impressões (jobs) |
+| jobbytes | Tamanho do arquivo impresso (bytes) |
+| client | Estação/computador de origem |
+| eventid | ID do evento do Windows (ex: 307) |
+| jobid | ID do trabalho de impressão |
+| timecreated | Data e hora do evento |
+| filename | Nome do documento impresso |
+| user | Usuário que realizou a impressão |
+| printer | Nome da impressora |
+| totalpages | Total de páginas impressas |
 | created_at | Data de inserção no banco |
 
 ---
 
-## 7️⃣ Índices Recomendados (Opcional)
+## ⚙️ Índices Recomendados
 
-Para melhor performance em consultas e dashboards:
+Para melhor desempenho em consultas e dashboards:
 
 ```sql
-CREATE INDEX idx_event_time ON print_logs(event_time);
-CREATE INDEX idx_user_name ON print_logs(user_name);
-CREATE INDEX idx_printer_name ON print_logs(printer_name);
+CREATE INDEX idx_timecreated ON printlog (timecreated);
+CREATE INDEX idx_user ON printlog (user);
+CREATE INDEX idx_printer ON printlog (printer);
+CREATE INDEX idx_client ON printlog (client);
+CREATE INDEX idx_eventid ON printlog (eventid);
 ```
 
 ---
 
-## 8️⃣ Teste de Inserção
+## 🧪 Inserção Manual para Testes
 
-Teste manual de inserção:
+Exemplo de inserção completa:
 
 ```sql
-INSERT INTO print_logs (
-    event_time,
-    user_name,
-    printer_name,
-    document_name,
-    pages,
-    computer_name,
-    job_id
+INSERT INTO printlog (
+    address,
+    pagecount,
+    jobbytes,
+    client,
+    eventid,
+    jobid,
+    timecreated,
+    filename,
+    user,
+    printer,
+    totalpages
 ) VALUES (
-    NOW(),
+    '10.96.10.45',
+    1,
+    4620288,
+    '\\NOTEBOOK-MAURO',
+    307,
+    12345,
+    '2025-06-15 10:22:00',
+    'Documento_Teste.pdf',
     'usuario.teste',
     'IMPRESSORA-01',
-    'documento_teste.pdf',
-    2,
-    'PC-TESTE',
-    12345
+    3
 );
 ```
 
-Valide os dados:
+---
 
-```sql
-SELECT * FROM print_logs ORDER BY id DESC;
-```
+## 📊 Uso no Grafana
+
+- Utilize a coluna `timecreated` como **campo de tempo**
+- Agregações recomendadas:
+  - `COUNT(*)` → total de jobs
+  - `SUM(totalpages)` → volume de páginas
+  - `SUM(jobbytes)` → volume de dados
 
 ---
 
-## 📊 Integração com Grafana
+## ⚠️ Boas Práticas
 
-- Configure o MySQL como **Data Source**
-- Utilize consultas SQL para análises por:
-  - Usuário
-  - Impressora
-  - Período
-  - Volume de páginas
-
----
-
-## 📌 Boas Práticas
-
-- Utilizar usuário dedicado
-- Evitar permissões excessivas
-- Criar índices conforme crescimento da base
-- Monitorar tamanho do banco
-- Implementar rotina de backup
+- Não armazenar valores formatados (ex: "4.5 MiB") no banco
+- Sempre gravar tamanhos em **bytes**
+- Converter unidades apenas na query ou no Grafana
+- Evitar alterações estruturais diretas em produção
+- Versionar alterações no schema no GitHub
 
 ---
 
-## 📄 Observações Finais
+## 📄 Observação Final
 
-A estrutura apresentada pode ser adaptada conforme a necessidade do ambiente, desde que mantenha os campos essenciais para auditoria e análise.
+Esta estrutura está **validada com dados reais e simulados**, pronta para uso em produção e dashboards analíticos.
 
-Este banco é a base para todo o ecossistema de monitoramento de impressões.
+Qualquer ajuste futuro deve considerar impacto no script PowerShell e nos painéis do Grafana.
