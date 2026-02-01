@@ -36,16 +36,67 @@ Windows Print Server
 Estrutura atual do repositório:
 
 ```
-print-log-to-mysql-grafana/
-├── Dashboard/
-│   └── Dashboards Grafana e arquivos relacionados
-├── Plugin/
-│   └── Componentes auxiliares / experimentais
+Servidor-de-logs-de-impressao-Mysql-Grafana/
+│
+├── README.md
+│   └── Documentação principal do projeto, visão geral,
+│       arquitetura, pré-requisitos e links para os demais documentos
+│
+├── dashboard/
+│   └── Dashboards do Grafana
+│       └── Log_de_impressoes_do_Windows_em_banco_de_dados_MySQL.json
+│          (Dashboard exportado do Grafana)
+│
+├── docs/
+│   ├── Configuracao log impressao windows.md
+│   │   └── Habilitação e configuração do log de impressão no Windows
+│   │
+│   ├── Configuracao powershell printlog.md
+│   │   └── Explicação detalhada do script PowerShell de coleta
+│   │
+│   ├── Docs agendamento task scheduler.md
+│   │   └── Criação e configuração da tarefa agendada no Windows
+│   │
+│   └── Docs queries printlog.md
+│       └── Documentação completa de todas as queries MySQL usadas
+│           nos painéis do Grafana
+│
+├── plugin/
+│   └── mysql-connector-net-8.1.0.msi
+│       └── Driver MySQL Connector para integração via PowerShell
+│
+├── prints/
+│   ├── Dashboard (1).png
+│   ├── Dashboard (2).png
+│   ├── Dashboard (3).png
+│   ├── Dashboard (4).png
+│   └── Dashboard (5).png
+│       └── Evidências visuais e prints dos dashboards do Grafana
+│
 ├── samples/
-│   └── Exemplos de eventos e logs de impressão
+│   └── EventID307_PrintLog.xml
+│       └── Exemplo real de evento de impressão (Event ID 307)
+│
 ├── scripts/
-│   └── Scripts PowerShell para coleta e envio ao MySQL
-└── README.md
+│   └── PrintLog-To-MySQL.ps1
+│       └── Script PowerShell responsável por:
+│           - Ler eventos do PrintService
+│           - Tratar os dados
+│           - Inserir no banco MySQL
+│
+├── sql/
+│   ├── Banco.png
+│   │   └── Evidência visual da estrutura do banco MySQL
+│   │
+│   ├── Criacao banco mysql logs impressao.md
+│   │   └── Documentação da criação e estrutura do banco de dados
+│   │
+│   └── schema.sql
+│       └── Schema MySQL alinhado com a tabela real `printlog`
+│
+└── samples/
+    └── EventID307_PrintLog.xml
+
 ```
 
 ---
@@ -147,16 +198,6 @@ Este projeto é inspirado e fundamentado em materiais amplamente utilizados pela
 
 - Microsoft KB – Print Service Logging  
   https://support.microsoft.com/en-us/kb/919736
-
----
-
-## 🛣️ Roadmap
-
-- [ ] Controle de eventos já processados
-- [ ] Tratamento de falhas de conexão
-- [ ] Padronização de dashboards Grafana
-- [ ] Documentação SQL
-- [ ] Otimização de performance
 
 ---
 
