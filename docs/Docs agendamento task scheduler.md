@@ -121,6 +121,7 @@ Clique em **Novo…**
   ```
   C:\PrintLog\scripts
   ```
+<img width="640" height="632" alt="image" src="https://github.com/user-attachments/assets/3c49d403-79b9-4dd7-994a-87e0be6f5cd8" />
 
 ---
 
