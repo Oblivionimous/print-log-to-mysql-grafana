@@ -154,6 +154,8 @@ O banco de dados armazena os registros de impressão de forma estruturada, permi
 
 A modelagem pode ser ajustada conforme a necessidade do ambiente.
 
+<img width="726" height="682" alt="image" src="https://github.com/user-attachments/assets/2ce24437-c4ea-4aad-aa4a-41aca749a74d" />
+
 ---
 
 ## 📊 Dashboards Grafana
