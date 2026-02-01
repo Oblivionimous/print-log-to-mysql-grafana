@@ -76,7 +76,7 @@ Servidor-de-logs-de-impressao-Mysql-Grafana/
 │   └── Dashboard (5).png
 │       └── Evidências visuais e prints dos dashboards do Grafana
 │
-├── samples/
+├── event/
 │   └── EventID307_PrintLog.xml
 │       └── Exemplo real de evento de impressão (Event ID 307)
 │
@@ -98,7 +98,7 @@ Servidor-de-logs-de-impressao-Mysql-Grafana/
 │       └── Schema MySQL alinhado com a tabela real `printlog`
 │
 └── samples/
-    └── EventID307_PrintLog.xml
+    └── EventID307_PrintLog.xml (template do agendador de tarefas)
 
 ```
 
