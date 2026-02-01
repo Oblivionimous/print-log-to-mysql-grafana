@@ -128,6 +128,8 @@ Para validar o status:
 ```powershell
 wevtutil gl Microsoft-Windows-PrintService/Operational
 ```
+<br>
+<img width="979" height="430" alt="image" src="https://github.com/user-attachments/assets/44e2a359-bbb8-4be8-a1e8-26f4dde67eca" />
 
 ---
 
