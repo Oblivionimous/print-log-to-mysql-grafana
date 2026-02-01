@@ -10,11 +10,11 @@
 
 $MySqlConnectorPath = "C:\Program Files (x86)\MySQL\MySQL Connector NET 8.1.0\MySql.Data.dll"
 
-$MySQLServer   = "10.96.123.165"
+$MySQLServer   = "xxx.xxx.xxx"
 $MySQLPort     = 3306
 $MySQLDatabase = "printlog"
-$MySQLUser     = "root"
-$MySQLPassword = "Rston3s98"
+$MySQLUser     = "user"
+$MySQLPassword = "senha_forte"
 
 # Diretórios e logs
 $BasePath        = "C:\PrintLog"
