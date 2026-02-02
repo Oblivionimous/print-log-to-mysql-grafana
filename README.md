@@ -166,7 +166,7 @@ A pasta `Dashboard/` contém ou destina-se a conter:
 - Impressões por impressora
 - Análise temporal (dia, mês, ano)
 
-<img width="1905" height="914" alt="image" src="https://github.com/user-attachments/assets/be1654f8-22a3-4dc7-9e1c-b56f7dd94c12" />
+<img width="2558" height="911" alt="image" src="https://github.com/user-attachments/assets/004ef38f-8acb-49b0-ad84-c612e2289234" />
 ---
 
 ## ⏱️ Execução e Automação
@@ -177,7 +177,7 @@ Os scripts podem ser executados via:
 - Execução manual
 - Trigger automático baseado em evento do Windows
 
-<img width="2558" height="911" alt="image" src="https://github.com/user-attachments/assets/004ef38f-8acb-49b0-ad84-c612e2289234" />
+
 
 ---
 
