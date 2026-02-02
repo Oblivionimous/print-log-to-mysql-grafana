@@ -16,8 +16,7 @@ Centralizar os eventos de impressão do Windows — principalmente o **Event ID 
 - Controle operacional e de custos
 - Visualização em dashboards Grafana
 
-<img width="1546" height="553" alt="image" src="https://github.com/user-attachments/assets/8dd472dc-8af5-4ddf-a876-2409fba8367b" />
-
+<img width="2559" height="915" alt="image" src="https://github.com/user-attachments/assets/4b4c5d04-4719-4e73-87a8-c1b7dbac5ce9" />
 
 ---
 
