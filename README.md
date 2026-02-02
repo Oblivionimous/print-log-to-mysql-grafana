@@ -177,7 +177,7 @@ Os scripts podem ser executados via:
 - Execução manual
 - Trigger automático baseado em evento do Windows
 
-<img width="633" height="481" alt="image" src="https://github.com/user-attachments/assets/637f891b-eb18-4c30-924a-a665939893d5" />
+<img width="2558" height="911" alt="image" src="https://github.com/user-attachments/assets/004ef38f-8acb-49b0-ad84-c612e2289234" />
 
 ---
 
