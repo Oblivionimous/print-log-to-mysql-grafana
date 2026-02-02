@@ -70,6 +70,8 @@ Configure:
   - ☑ Executar com privilégios mais altos
 - **Configurar para:**  
   - Windows Server (versão correspondente)
+<br>
+<img width="632" height="486" alt="image" src="https://github.com/user-attachments/assets/e4fe9378-66ac-427f-8d12-9569ef50d8ee" />
 
 ---
 
@@ -83,6 +85,10 @@ Clique em **Novo…**
 - **Configurações:**
   - Diariamente
   - Hora inicial: `00:00`
+ <img width="627" height="518" alt="image" src="https://github.com/user-attachments/assets/fc48f7ff-65d9-4386-995b-85b595268ea9" />
+<br>
+<img width="623" height="515" alt="image" src="https://github.com/user-attachments/assets/0ca6969e-76c4-4378-82ef-26203572b228" />
+
 - **Configurações avançadas:**
   - ☑ Repetir a tarefa a cada: `5 minutos`
   - Por uma duração de: `Indefinidamente`
@@ -115,6 +121,7 @@ Clique em **Novo…**
   ```
   C:\PrintLog\scripts
   ```
+<img width="640" height="632" alt="image" src="https://github.com/user-attachments/assets/3c49d403-79b9-4dd7-994a-87e0be6f5cd8" />
 
 ---
 
@@ -125,7 +132,9 @@ Recomendações:
 - ❌ Desmarcar:
   - “Iniciar a tarefa somente se o computador estiver em energia AC” (se for servidor)
 - ❌ Desmarcar:
-  - “Parar se o computador mudar para bateria” (caso apareça)
+  - “Parar se o computador mudar para bateria” (caso apareça) 
+    
+<img width="637" height="486" alt="image" src="https://github.com/user-attachments/assets/90b5f4a2-85ef-4a2b-87fc-d150a388bd56" />
 
 ---
 
@@ -142,6 +151,8 @@ Desmarcar:
 
 - ❌ Parar a tarefa se ela for executada por mais de:
   - (o script deve ser rápido e finalizar sozinho)
+
+<img width="633" height="482" alt="image" src="https://github.com/user-attachments/assets/66ee9502-450d-424b-8b26-343e786af142" />
 
 ---
 

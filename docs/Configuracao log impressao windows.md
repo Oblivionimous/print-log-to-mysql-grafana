@@ -58,6 +58,9 @@ Visualizador de Eventos
         └── Windows
             └── PrintService
 ```
+<img width="494" height="304" alt="image" src="https://github.com/user-attachments/assets/e45de9b6-ec21-4aa6-8ddd-c34dbd4476b2" />
+<br>
+<img width="270" height="76" alt="image" src="https://github.com/user-attachments/assets/d3ea7caa-6281-4441-9786-3867a5cd06cc" />
 
 ---
 
@@ -67,6 +70,7 @@ Visualizador de Eventos
 - Selecione **Habilitar Log**
 
 Após habilitado, o ícone ficará ativo e o Windows começará a registrar eventos de impressão.
+<img width="881" height="589" alt="image" src="https://github.com/user-attachments/assets/0e162948-b9dd-4c37-bad6-4e0e69ebc125" />
 
 ---
 
@@ -85,6 +89,7 @@ Informações disponíveis:
 - Computador de origem
 
 Este é o evento utilizado para integração com PowerShell e banco de dados.
+<img width="600" height="438" alt="image" src="https://github.com/user-attachments/assets/0c973876-55ff-48e2-830d-95fbbea89251" />
 
 ---
 
@@ -105,6 +110,8 @@ Este é o evento utilizado para integração com PowerShell e banco de dados.
 3. Clique no evento e valide os dados exibidos
 
 Se o evento aparecer, o log está funcionando corretamente.
+<br>
+<img width="446" height="296" alt="image" src="https://github.com/user-attachments/assets/6543e83a-7ea6-477a-89da-d272e697239b" />
 
 ---
 
@@ -121,6 +128,8 @@ Para validar o status:
 ```powershell
 wevtutil gl Microsoft-Windows-PrintService/Operational
 ```
+<br>
+<img width="979" height="430" alt="image" src="https://github.com/user-attachments/assets/44e2a359-bbb8-4be8-a1e8-26f4dde67eca" />
 
 ---
 

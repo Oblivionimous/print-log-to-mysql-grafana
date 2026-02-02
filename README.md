@@ -16,6 +16,8 @@ Centralizar os eventos de impressão do Windows — principalmente o **Event ID 
 - Controle operacional e de custos
 - Visualização em dashboards Grafana
 
+<img width="2559" height="915" alt="image" src="https://github.com/user-attachments/assets/4b4c5d04-4719-4e73-87a8-c1b7dbac5ce9" />
+
 ---
 
 ## 🧩 Arquitetura da Solução
@@ -36,16 +38,67 @@ Windows Print Server
 Estrutura atual do repositório:
 
 ```
-print-log-to-mysql-grafana/
-├── Dashboard/
-│   └── Dashboards Grafana e arquivos relacionados
-├── Plugin/
-│   └── Componentes auxiliares / experimentais
-├── samples/
-│   └── Exemplos de eventos e logs de impressão
+Servidor-de-logs-de-impressao-Mysql-Grafana/
+│
+├── README.md
+│   └── Documentação principal do projeto, visão geral,
+│       arquitetura, pré-requisitos e links para os demais documentos
+│
+├── dashboard/
+│   └── Dashboards do Grafana
+│       └── Log_de_impressoes_do_Windows_em_banco_de_dados_MySQL.json
+│          (Dashboard exportado do Grafana)
+│
+├── docs/
+│   ├── Configuracao log impressao windows.md
+│   │   └── Habilitação e configuração do log de impressão no Windows
+│   │
+│   ├── Configuracao powershell printlog.md
+│   │   └── Explicação detalhada do script PowerShell de coleta
+│   │
+│   ├── Docs agendamento task scheduler.md
+│   │   └── Criação e configuração da tarefa agendada no Windows
+│   │
+│   └── Docs queries printlog.md
+│       └── Documentação completa de todas as queries MySQL usadas
+│           nos painéis do Grafana
+│
+├── plugin/
+│   └── mysql-connector-net-8.1.0.msi
+│       └── Driver MySQL Connector para integração via PowerShell
+│
+├── prints/
+│   ├── Dashboard (1).png
+│   ├── Dashboard (2).png
+│   ├── Dashboard (3).png
+│   ├── Dashboard (4).png
+│   └── Dashboard (5).png
+│       └── Evidências visuais e prints dos dashboards do Grafana
+│
+├── event/
+│   └── EventID307_PrintLog.xml
+│       └── Exemplo real de evento de impressão (Event ID 307)
+│
 ├── scripts/
-│   └── Scripts PowerShell para coleta e envio ao MySQL
-└── README.md
+│   └── PrintLog-To-MySQL.ps1
+│       └── Script PowerShell responsável por:
+│           - Ler eventos do PrintService
+│           - Tratar os dados
+│           - Inserir no banco MySQL
+│
+├── sql/
+│   ├── Banco.png
+│   │   └── Evidência visual da estrutura do banco MySQL
+│   │
+│   ├── Criacao banco mysql logs impressao.md
+│   │   └── Documentação da criação e estrutura do banco de dados
+│   │
+│   └── schema.sql
+│       └── Schema MySQL alinhado com a tabela real `printlog`
+│
+└── samples/
+    └── EventID307_PrintLog.xml (template do agendador de tarefas)
+
 ```
 
 ---
@@ -62,7 +115,7 @@ print-log-to-mysql-grafana/
   ```
   mysql-connector-net-8.1.0.msi
   ```
-
+https://downloads.mysql.com/archives/c-net/
 ---
 
 ## 📜 Scripts PowerShell
@@ -100,6 +153,8 @@ O banco de dados armazena os registros de impressão de forma estruturada, permi
 
 A modelagem pode ser ajustada conforme a necessidade do ambiente.
 
+<img width="726" height="682" alt="image" src="https://github.com/user-attachments/assets/2ce24437-c4ea-4aad-aa4a-41aca749a74d" />
+
 ---
 
 ## 📊 Dashboards Grafana
@@ -111,6 +166,7 @@ A pasta `Dashboard/` contém ou destina-se a conter:
 - Impressões por impressora
 - Análise temporal (dia, mês, ano)
 
+<img width="2558" height="911" alt="image" src="https://github.com/user-attachments/assets/004ef38f-8acb-49b0-ad84-c612e2289234" />
 ---
 
 ## ⏱️ Execução e Automação
@@ -120,6 +176,8 @@ Os scripts podem ser executados via:
 - Agendador de Tarefas do Windows
 - Execução manual
 - Trigger automático baseado em evento do Windows
+
+
 
 ---
 
@@ -147,16 +205,6 @@ Este projeto é inspirado e fundamentado em materiais amplamente utilizados pela
 
 - Microsoft KB – Print Service Logging  
   https://support.microsoft.com/en-us/kb/919736
-
----
-
-## 🛣️ Roadmap
-
-- [ ] Controle de eventos já processados
-- [ ] Tratamento de falhas de conexão
-- [ ] Padronização de dashboards Grafana
-- [ ] Documentação SQL
-- [ ] Otimização de performance
 
 ---
 
