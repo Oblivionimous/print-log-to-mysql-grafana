@@ -1,4 +1,4 @@
-﻿<#
+<#
     Script: PrintLog-To-MySQL.ps1
     Função: Ler eventos 307 do log de impressão do Windows e gravar no MySQL (tabela printlog)
     Versão: 26/11/2025 – Mauro Paiva – DUPLICAÇÕES CORRIGIDAS (RecordId)
@@ -16,8 +16,14 @@ $MySQLDatabase = "printlog"
 $MySQLUser     = "user"
 $MySQLPassword = "senha_forte"
 
-# Diretórios e logs
-$BasePath        = "C:\PrintLog"
+# Identificação da unidade / setor (personalizar por servidor/local)
+$Sector = "MATRIZ_SP"
+
+# Prefixo base do nome da tabela (uma tabela por unidade/setor)
+$MySQLTablePrefix = "printlog"
+
+# Diretórios e logs (usar ProgramData, que é oculto para usuários comuns)
+$BasePath        = "C:\ProgramData\PrintLog"
 $InfoLogFile     = Join-Path $BasePath "PrintLog-To-MySQL.log"
 $ErrorLogFile    = Join-Path $BasePath "PrintLog-To-MySQL-error.log"
 $RecordIdFile    = Join-Path $BasePath "last_recordid.txt"
@@ -25,6 +31,20 @@ $RecordIdFile    = Join-Path $BasePath "last_recordid.txt"
 if (-not (Test-Path $BasePath)) {
     New-Item -Path $BasePath -ItemType Directory -Force | Out-Null
 }
+
+# Monta nome da tabela a partir do prefixo e do setor
+function Get-TableName {
+    param(
+        [string]$BaseName,
+        [string]$Sector
+    )
+
+    # Sanitiza o setor para uso em nome de tabela (apenas letras, números e underscore)
+    $safeSector = ($Sector -replace '[^A-Za-z0-9_]', '_').ToLower()
+    return "{0}_{1}" -f $BaseName, $safeSector
+}
+
+$MySQLTableName = Get-TableName -BaseName $MySQLTablePrefix -Sector $Sector
 
 # ========================
 # 2. FUNÇÕES AUXILIARES
@@ -67,6 +87,8 @@ function Set-LastRecordId {
 function Insert-PrintLogData {
     param(
         [MySql.Data.MySqlClient.MySqlConnection]$Connection,
+        [string]  $TableName,
+        [string]  $Sector,
         [string]  $Address,
         [int]     $PageCount,
         [long]    $JobBytes,
@@ -83,9 +105,9 @@ function Insert-PrintLogData {
     $americanDateTime = Convert-ToAmericanDateFormat -dateTime $TimeCreated
 
     $query = @"
-INSERT INTO printlog
-(address, pagecount, jobbytes, client, eventid, jobid, timecreated, filename, user, printer, totalpages)
-VALUES (@address, @pagecount, @jobbytes, @client, @eventid, @jobid, @timecreated, @filename, @user, @printer, @totalpages)
+INSERT INTO $TableName
+(address, pagecount, jobbytes, client, eventid, jobid, timecreated, filename, user, printer, totalpages, setor)
+VALUES (@address, @pagecount, @jobbytes, @client, @eventid, @jobid, @timecreated, @filename, @user, @printer, @totalpages, @setor)
 "@
 
     $cmd = $Connection.CreateCommand()
@@ -102,7 +124,37 @@ VALUES (@address, @pagecount, @jobbytes, @client, @eventid, @jobid, @timecreated
     $cmd.Parameters.AddWithValue("@user",        $UserName)    | Out-Null
     $cmd.Parameters.AddWithValue("@printer",     $PrinterName) | Out-Null
     $cmd.Parameters.AddWithValue("@totalpages",  $TotalPages)  | Out-Null
+    $cmd.Parameters.AddWithValue("@setor",       $Sector)      | Out-Null
 
+    [void]$cmd.ExecuteNonQuery()
+}
+
+function Ensure-TableExists {
+    param(
+        [MySql.Data.MySqlClient.MySqlConnection]$Connection,
+        [string]$TableName
+    )
+
+    $ddl = @"
+CREATE TABLE IF NOT EXISTS $TableName (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    address     VARCHAR(255),
+    pagecount   INT,
+    jobbytes    BIGINT,
+    client      VARCHAR(255),
+    eventid     INT,
+    jobid       BIGINT,
+    timecreated DATETIME,
+    filename    VARCHAR(255),
+    user        VARCHAR(255),
+    printer     VARCHAR(255),
+    totalpages  INT,
+    setor       VARCHAR(255)
+);
+"@
+
+    $cmd = $Connection.CreateCommand()
+    $cmd.CommandText = $ddl
     [void]$cmd.ExecuteNonQuery()
 }
 
@@ -129,9 +181,13 @@ $Connection = New-Object MySql.Data.MySqlClient.MySqlConnection($ConnectionStrin
 try {
     $Connection.Open()
     Write-LogInfo "Conexão MySQL aberta com sucesso."
+
+    # Garante que a tabela para este setor exista
+    Ensure-TableExists -Connection $Connection -TableName $MySQLTableName
+    Write-LogInfo "Tabela $MySQLTableName verificada/criada com sucesso."
 }
 catch {
-    Write-LogError "Erro ao abrir conexão MySQL: $($_.Exception.Message)"
+    Write-LogError "Erro ao abrir conexão MySQL ou criar tabela: $($_.Exception.Message)"
     throw
 }
 
@@ -176,6 +232,8 @@ try {
             try {
                 Insert-PrintLogData `
                     -Connection  $Connection `
+                    -TableName   $MySQLTableName `
+                    -Sector      $Sector `
                     -Address     $Address `
                     -PageCount   $PageCount `
                     -JobBytes    $JobBytes `
