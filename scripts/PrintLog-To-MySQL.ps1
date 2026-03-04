@@ -149,7 +149,8 @@ CREATE TABLE IF NOT EXISTS $TableName (
     user        VARCHAR(255),
     printer     VARCHAR(255),
     totalpages  INT,
-    setor       VARCHAR(255)
+    setor       VARCHAR(255),
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 "@
 

@@ -16,43 +16,39 @@ CREATE DATABASE IF NOT EXISTS printlog
 USE printlog;
 
 -- ------------------------------------------------------------
--- Tabela principal de logs de impressão
+-- Tabela exemplo de logs de impressão para uma unidade/setor
 -- ------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS print_logs (
+-- O script PowerShell cria automaticamente tabelas no formato:
+--   printlog_<setor>
+-- Exemplo abaixo para o setor "MATRIZ_SP" (tabela printlog_matriz_sp).
+
+CREATE TABLE IF NOT EXISTS printlog_matriz_sp (
     id INT AUTO_INCREMENT PRIMARY KEY,
 
-    -- Identificação do evento
-    record_id BIGINT NOT NULL COMMENT 'RecordId do Event Viewer',
-    event_time DATETIME NOT NULL COMMENT 'Data/hora do evento de impressão',
-
-    -- Informações do trabalho de impressão
-    job_id INT COMMENT 'ID do job de impressão',
-    document_name VARCHAR(255) COMMENT 'Nome do documento impresso',
-    pages INT DEFAULT 0 COMMENT 'Quantidade de páginas',
-    job_bytes BIGINT COMMENT 'Tamanho do job em bytes',
-
-    -- Usuário e origem
-    user_name VARCHAR(255) NOT NULL COMMENT 'Usuário que realizou a impressão',
-    computer_name VARCHAR(255) COMMENT 'Computador de origem',
-
-    -- Impressora
-    printer_name VARCHAR(255) NOT NULL COMMENT 'Nome da impressora',
-    printer_port VARCHAR(255) COMMENT 'Porta/IP da impressora',
-
-    -- Controle
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Data de inserção no banco',
-
-    -- Garantia de não duplicidade
-    UNIQUE KEY uk_record_id (record_id)
+    -- Campos alinhados com o script PrintLog-To-MySQL.ps1
+    address     VARCHAR(255) COMMENT 'Endereço/IP da impressora',
+    pagecount   INT          COMMENT 'Quantidade de páginas do job',
+    jobbytes    BIGINT       COMMENT 'Tamanho do job em bytes',
+    client      VARCHAR(255) COMMENT 'Estação/computador de origem',
+    eventid     INT          COMMENT 'ID do evento do Windows (ex.: 307)',
+    jobid       BIGINT       COMMENT 'ID do job de impressão',
+    timecreated DATETIME     COMMENT 'Data/hora do evento de impressão',
+    filename    VARCHAR(255) COMMENT 'Nome do documento impresso',
+    user        VARCHAR(255) COMMENT 'Usuário que realizou a impressão',
+    printer     VARCHAR(255) COMMENT 'Nome da impressora',
+    totalpages  INT          COMMENT 'Total de páginas impressas',
+    setor       VARCHAR(255) COMMENT 'Identificador da unidade/setor (ex.: MATRIZ_SP)',
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Data de inserção no banco'
 ) ENGINE=InnoDB;
 
 -- ------------------------------------------------------------
 -- Índices para performance (Grafana / relatórios)
 -- ------------------------------------------------------------
-CREATE INDEX idx_event_time ON print_logs(event_time);
-CREATE INDEX idx_user_name ON print_logs(user_name);
-CREATE INDEX idx_printer_name ON print_logs(printer_name);
-CREATE INDEX idx_computer_name ON print_logs(computer_name);
+CREATE INDEX idx_timecreated_matriz_sp ON printlog_matriz_sp(timecreated);
+CREATE INDEX idx_user_matriz_sp        ON printlog_matriz_sp(user);
+CREATE INDEX idx_printer_matriz_sp     ON printlog_matriz_sp(printer);
+CREATE INDEX idx_client_matriz_sp      ON printlog_matriz_sp(client);
+CREATE INDEX idx_eventid_matriz_sp     ON printlog_matriz_sp(eventid);
 
 -- ------------------------------------------------------------
 -- Exemplo de usuário dedicado (opcional)
@@ -65,4 +61,4 @@ CREATE INDEX idx_computer_name ON print_logs(computer_name);
 -- ------------------------------------------------------------
 -- Consulta de validação
 -- ------------------------------------------------------------
--- SELECT * FROM print_logs ORDER BY event_time DESC LIMIT 10;
+-- SELECT * FROM printlog_matriz_sp ORDER BY timecreated DESC LIMIT 10;
