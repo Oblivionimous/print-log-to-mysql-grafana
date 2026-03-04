@@ -4,7 +4,7 @@ Este documento explica, de forma detalhada, como preparar o Windows e o PowerShe
 
 `Microsoft-Windows-PrintService/Operational`
 
-e grava os dados em uma tabela MySQL (ex.: `printlog`).
+e grava os dados em tabelas MySQL do tipo `printlog_<setor>` (uma tabela por unidade/setor).
 
 ---
 
@@ -46,10 +46,10 @@ C:\Program Files (x86)\MySQL\MySQL Connector NET 8.1.0\MySql.Data.dll
 
 ## 2) Preparar a pasta de execução e logs
 
-O script utiliza por padrão:
+O script utiliza por padrão a seguinte pasta (oculta no Windows) para **logs e arquivos de controle**:
 
 ```
-C:\PrintLog
+C:\ProgramData\PrintLog
 ```
 
 Dentro dessa pasta ele cria e atualiza:
@@ -59,6 +59,8 @@ Dentro dessa pasta ele cria e atualiza:
 - `last_recordid.txt` (controle anti-duplicação)
 
 Você pode manter esse padrão ou alterar o **`$BasePath`**.
+
+> 💡 Como a pasta `C:\ProgramData` é oculta por padrão, isso ajuda a “esconder” os arquivos de log e controle de usuários comuns.
 
 ---
 
@@ -94,11 +96,25 @@ $MySQLPassword = "SENHA"
 
 ### 3.3 Caminhos de logs e controle anti-duplicação
 ```powershell
-$BasePath     = "C:\PrintLog"
+$BasePath     = "C:\ProgramData\PrintLog"
 $RecordIdFile = Join-Path $BasePath "last_recordid.txt"
 ```
 
 O arquivo `last_recordid.txt` guarda o último **RecordId** processado no Event Viewer, garantindo que **não haja duplicação**.
+
+### 3.4 Setor/Unidade (tabela por local)
+
+Cada servidor/unidade pode ter um identificador próprio, usado tanto para **nome da tabela** no MySQL quanto para a coluna de **setor**:
+
+```powershell
+$Sector = "MATRIZ_SP"
+```
+
+- Esse valor será gravado na coluna `setor` e também compõe o nome da tabela:
+  - Tabela resultante: `printlog_matriz_sp`  
+  - Para outra unidade, por exemplo `"RJ_FILIAL1"`, a tabela será `printlog_rj_filial1`.
+
+O próprio script garante a criação/verificação da tabela correspondente a cada setor, sem necessidade de criar manualmente no MySQL.
 
 ---
 
@@ -144,13 +160,14 @@ Ele usa `event.Properties[]` para coletar os dados do Event ID 307:
 - `PageCount`
 
 ### 4.5 Insere no MySQL com parâmetros
-A inserção é feita com `INSERT INTO printlog (...) VALUES (...)` usando parâmetros, reduzindo risco de SQL injection e problemas de escape.
+A inserção é feita com `INSERT INTO printlog_<setor> (...) VALUES (...)` usando parâmetros, reduzindo risco de SQL injection e problemas de escape.  
+O `<setor>` vem do valor configurado em `$Sector` (por exemplo, `printlog_matriz_sp`, `printlog_rj_filial1`, etc.).
 
 ### 4.6 Atualiza o último RecordId processado
 Ao inserir com sucesso, salva o `RecordId` no arquivo:
 
 ```
-C:\PrintLog\last_recordid.txt
+C:\ProgramData\PrintLog\last_recordid.txt
 ```
 
 Se o script rodar novamente, ele continuará a partir desse ponto.
@@ -170,15 +187,17 @@ cd C:\caminho\do\repositorio\scripts
 ### Validar logs gerados
 Confira os arquivos:
 
-- `C:\PrintLog\PrintLog-To-MySQL.log`
-- `C:\PrintLog\PrintLog-To-MySQL-error.log`
+- `C:\ProgramData\PrintLog\PrintLog-To-MySQL.log`
+- `C:\ProgramData\PrintLog\PrintLog-To-MySQL-error.log`
 
 ### Validar no MySQL
 No MySQL:
 
 ```sql
-SELECT * FROM printlog ORDER BY timecreated DESC LIMIT 20;
+SELECT * FROM printlog_matriz_sp ORDER BY timecreated DESC LIMIT 20;
 ```
+
+> Substitua `printlog_matriz_sp` pelo nome da tabela correspondente ao valor que você usou em `$Sector`.
 
 ---
 
@@ -223,7 +242,7 @@ Na prática, **Task Scheduler com intervalo fixo** costuma ser mais estável.
 
 ### Script insere duplicado
 - Este script controla duplicação por `RecordId`
-- Verifique se o arquivo `C:\PrintLog\last_recordid.txt` está sendo atualizado
+- Verifique se o arquivo `C:\ProgramData\PrintLog\last_recordid.txt` está sendo atualizado
 - Se necessário, apague o arquivo para “reiniciar” a coleta (isso pode reprocessar eventos antigos)
 
 ### Não aparecem eventos 307

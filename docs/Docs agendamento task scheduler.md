@@ -30,7 +30,7 @@ Windows Task Scheduler
 - Usuário com permissão:
   - Leitura do Event Viewer
   - Execução de PowerShell
-- Pasta de execução criada (ex.: `C:\PrintLog`)
+- Pasta de logs e controle criada automaticamente (ex.: `C:\ProgramData\PrintLog`)
 
 ---
 
@@ -114,12 +114,12 @@ Clique em **Novo…**
 
 - **Adicionar argumentos:**
   ```
-  -NoProfile -ExecutionPolicy Bypass -File "C:\PrintLog\scripts\PrintLog-To-MySQL.ps1"
+  -NoProfile -ExecutionPolicy Bypass -File "C:\ProgramData\PrintLog\PrintLog-To-MySQL.ps1"
   ```
 
 - **Iniciar em (opcional, recomendado):**
   ```
-  C:\PrintLog\scripts
+  C:\ProgramData\PrintLog
   ```
 <img width="640" height="632" alt="image" src="https://github.com/user-attachments/assets/3c49d403-79b9-4dd7-994a-87e0be6f5cd8" />
 
@@ -164,7 +164,7 @@ Ao salvar a tarefa:
 - Recomenda-se:
   - Conta de serviço dedicada
   - Membro do grupo **Event Log Readers**
-  - Permissão de leitura/gravação na pasta `C:\PrintLog`
+  - Permissão de leitura/gravação na pasta `C:\ProgramData\PrintLog`
 
 ---
 
@@ -175,13 +175,15 @@ Após criar:
 1. Clique com o botão direito na tarefa
 2. Selecione **Executar**
 3. Verifique:
-   - Arquivo `PrintLog-To-MySQL.log`
-   - Arquivo `PrintLog-To-MySQL-error.log`
+   - Arquivo `C:\ProgramData\PrintLog\PrintLog-To-MySQL.log`
+   - Arquivo `C:\ProgramData\PrintLog\PrintLog-To-MySQL-error.log`
 4. Valide inserções no MySQL
 
 ```sql
-SELECT * FROM printlog ORDER BY timecreated DESC LIMIT 10;
+SELECT * FROM printlog_matriz_sp ORDER BY timecreated DESC LIMIT 10;
 ```
+
+> Substitua `printlog_matriz_sp` pelo nome da tabela correspondente ao setor configurado em `$Sector` no script.
 
 ---
 
@@ -205,7 +207,7 @@ Na prática, **intervalo fixo é mais estável e recomendado**.
   - Permissões do usuário
 - Consulte o arquivo:
   ```
-  C:\PrintLog\PrintLog-To-MySQL-error.log
+  C:\ProgramData\PrintLog\PrintLog-To-MySQL-error.log
   ```
 
 ### Tarefa não executa

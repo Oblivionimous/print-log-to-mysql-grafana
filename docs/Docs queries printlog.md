@@ -1,7 +1,7 @@
 # Documentação das Queries – Logs de Impressão (MySQL)
 
 Este documento descreve **todas as queries utilizadas no projeto de Logs de Impressão**, explicando **objetivo, uso e contexto no Grafana**.  
-Todas as consultas utilizam a tabela **`printlog`**, alinhada com a estrutura real do banco.
+As consultas assumem uma tabela com a mesma estrutura do `printlog` original; no modelo atual, essa tabela é criada automaticamente com o nome `printlog_<setor>` (por exemplo, `printlog_matriz_sp`).
 
 ---
 
@@ -14,7 +14,7 @@ Exibir o **total de páginas impressas por usuário no mês atual**, ordenado do
 SELECT
     user AS usuario,
     SUM(totalpages) AS value
-FROM printlog
+FROM printlog_matriz_sp
 WHERE MONTH(timecreated) = MONTH(NOW())
   AND YEAR(timecreated) = YEAR(NOW())
 GROUP BY user
@@ -29,7 +29,7 @@ ORDER BY value DESC;
 SELECT 
     user AS usuario,
     SUM(totalpages) AS total_paginas
-FROM printlog
+FROM printlog_matriz_sp
 WHERE DATE(timecreated) = CURRENT_DATE()
 GROUP BY user
 ORDER BY total_paginas DESC;
@@ -43,7 +43,7 @@ ORDER BY total_paginas DESC;
 SELECT 
     printer AS impressora,
     SUM(totalpages) AS total_paginas
-FROM printlog
+FROM printlog_matriz_sp
 WHERE DATE(timecreated) = CURRENT_DATE()
 GROUP BY printer
 ORDER BY total_paginas DESC;
@@ -56,7 +56,7 @@ ORDER BY total_paginas DESC;
 ```sql
 SELECT 
     SUM(totalpages) AS total_impresso
-FROM printlog;
+FROM printlog_matriz_sp;
 ```
 
 ---
@@ -66,7 +66,7 @@ FROM printlog;
 ```sql
 SELECT 
     SUM(totalpages) AS total_paginas_mes
-FROM printlog
+FROM printlog_matriz_sp
 WHERE 
     YEAR(timecreated) = YEAR(CURRENT_DATE())
     AND MONTH(timecreated) = MONTH(CURRENT_DATE());
@@ -79,7 +79,7 @@ WHERE
 ```sql
 SELECT 
     SUM(totalpages) AS total_ontem
-FROM printlog
+FROM printlog_matriz_sp
 WHERE DATE(timecreated) = DATE(NOW() - INTERVAL 1 DAY);
 ```
 
@@ -90,7 +90,7 @@ WHERE DATE(timecreated) = DATE(NOW() - INTERVAL 1 DAY);
 ```sql
 SELECT 
     SUM(totalpages) AS total_hoje
-FROM printlog
+FROM printlog_matriz_sp
 WHERE DATE(timecreated) = CURRENT_DATE();
 ```
 
@@ -102,7 +102,7 @@ WHERE DATE(timecreated) = CURRENT_DATE();
 SELECT
     printer AS impressora,
     SUM(totalpages) AS total_paginas
-FROM printlog
+FROM printlog_matriz_sp
 WHERE DATE(timecreated) = CURRENT_DATE()
 GROUP BY printer
 ORDER BY total_paginas DESC
@@ -117,7 +117,7 @@ LIMIT 10;
 SELECT 
     user AS usuario,
     SUM(totalpages) AS total_paginas
-FROM printlog
+FROM printlog_matriz_sp
 WHERE 
     YEAR(timecreated) = YEAR(CURRENT_DATE())
     AND MONTH(timecreated) = MONTH(CURRENT_DATE())
@@ -134,7 +134,7 @@ LIMIT 10;
 SELECT
     printer AS impressora,
     SUM(totalpages) AS total_paginas
-FROM printlog
+FROM printlog_matriz_sp
 WHERE MONTH(timecreated) = MONTH(CURDATE())
   AND YEAR(timecreated) = YEAR(CURDATE())
 GROUP BY printer
@@ -151,7 +151,7 @@ SELECT
     DATE_FORMAT(timecreated, '%Y-%m')  AS ano_mes,
     DATE_FORMAT(timecreated, '%M %Y') AS mes,
     SUM(totalpages)                  AS total_paginas
-FROM printlog
+FROM printlog_matriz_sp
 WHERE timecreated >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)
 GROUP BY ano_mes, mes
 ORDER BY ano_mes;
@@ -165,7 +165,7 @@ ORDER BY ano_mes;
 SELECT 
     DATE(timecreated) AS dia,
     SUM(totalpages) AS total_paginas
-FROM printlog
+FROM printlog_matriz_sp
 GROUP BY DATE(timecreated)
 ORDER BY dia ASC;
 ```
@@ -178,7 +178,7 @@ ORDER BY dia ASC;
 SELECT 
     printer AS impressora,
     SUM(totalpages) AS total_paginas
-FROM printlog
+FROM printlog_matriz_sp
 GROUP BY printer
 ORDER BY total_paginas DESC;
 ```
@@ -199,7 +199,7 @@ SELECT
     jobbytes AS tamanho,
     pagecount AS paginas,
     totalpages AS total
-FROM printlog
+FROM printlog_matriz_sp
 ORDER BY timecreated DESC
 LIMIT 500;
 ```
@@ -210,4 +210,5 @@ LIMIT 500;
 
 - `timecreated` deve ser usado como **campo de tempo no Grafana**
 - `totalpages` é a métrica principal de volume
-- Queries prontas para uso direto em painéis
+- Substitua `printlog_matriz_sp` pelo nome da tabela correspondente ao valor configurado em `$Sector` no script (por exemplo, `printlog_rj_filial1`).
+- Caso você utilize uma **view consolidando várias tabelas de unidades**, pode apontar todas essas queries para essa view em vez de uma tabela única.

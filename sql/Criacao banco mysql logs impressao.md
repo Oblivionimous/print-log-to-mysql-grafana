@@ -1,6 +1,6 @@
 # Criação e Estrutura do Banco de Dados MySQL – Logs de Impressão
 
-Este documento descreve a **estrutura real do banco de dados MySQL** utilizada no projeto **Print Log to MySQL + Grafana**, já **alinhada com a tabela existente em produção/lab** (`printlog`).
+Este documento descreve a **estrutura real do banco de dados MySQL** utilizada no projeto **Print Log to MySQL + Grafana**, já **alinhada com o modelo atual do script**, que cria automaticamente **uma tabela por unidade/setor** no formato `printlog_<setor>`.
 
 > ⚠️ Importante: este documento **não propõe recriação do banco em produção**.  
 > Ele serve como **documentação técnica versionada** e referência para ambientes de laboratório.
@@ -46,36 +46,48 @@ printlog
 ## 🗄️ Tabela Principal
 
 ### Nome da tabela
+
+No modelo atual, o script cria uma tabela para cada unidade/setor, com o nome:
+
 ```sql
-printlog
+printlog_<setor>
+```
+
+Exemplos:
+
+```text
+printlog_matriz_sp
+printlog_rj_filial1
+printlog_ba_filial2
 ```
 
 ### Finalidade
-Armazenar cada evento de impressão registrado no Windows, com informações completas do job, usuário, impressora e estação.
+Armazenar cada evento de impressão registrado no Windows, com informações completas do job, usuário, impressora, estação e **setor/unidade** correspondente.
 
 ---
 
 ## 📐 Estrutura Real da Tabela
 
 ```sql
-CREATE TABLE printlog (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-
-    address VARCHAR(45),
-    pagecount INT UNSIGNED,
-    jobbytes BIGINT UNSIGNED,
-    client VARCHAR(255),
-    eventid INT,
-    jobid BIGINT UNSIGNED,
+CREATE TABLE printlog_matriz_sp (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    address     VARCHAR(255),
+    pagecount   INT,
+    jobbytes    BIGINT,
+    client      VARCHAR(255),
+    eventid     INT,
+    jobid       BIGINT,
     timecreated DATETIME,
-    filename VARCHAR(512),
-    user VARCHAR(255),
-    printer VARCHAR(255),
-    totalpages INT UNSIGNED,
-
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    filename    VARCHAR(255),
+    user        VARCHAR(255),
+    printer     VARCHAR(255),
+    totalpages  INT,
+    setor       VARCHAR(255),
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
+
+> O script PowerShell usa exatamente essa estrutura ao criar tabelas automaticamente com `CREATE TABLE IF NOT EXISTS printlog_<setor> (...)`.
 
 ---
 
@@ -85,7 +97,7 @@ CREATE TABLE printlog (
 |------|----------|
 | id | Identificador interno (auto_increment) |
 | address | Endereço/IP da impressora |
-| pagecount | Quantidade de impressões (jobs) |
+| pagecount | Quantidade de páginas do job |
 | jobbytes | Tamanho do arquivo impresso (bytes) |
 | client | Estação/computador de origem |
 | eventid | ID do evento do Windows (ex: 307) |
@@ -95,6 +107,7 @@ CREATE TABLE printlog (
 | user | Usuário que realizou a impressão |
 | printer | Nome da impressora |
 | totalpages | Total de páginas impressas |
+| setor | Identificador da unidade/setor (ex.: MATRIZ_SP, RJ_FILIAL1) |
 | created_at | Data de inserção no banco |
 
 ---
@@ -104,12 +117,14 @@ CREATE TABLE printlog (
 Para melhor desempenho em consultas e dashboards:
 
 ```sql
-CREATE INDEX idx_timecreated ON printlog (timecreated);
-CREATE INDEX idx_user ON printlog (user);
-CREATE INDEX idx_printer ON printlog (printer);
-CREATE INDEX idx_client ON printlog (client);
-CREATE INDEX idx_eventid ON printlog (eventid);
+CREATE INDEX idx_timecreated ON printlog_matriz_sp (timecreated);
+CREATE INDEX idx_user        ON printlog_matriz_sp (user);
+CREATE INDEX idx_printer     ON printlog_matriz_sp (printer);
+CREATE INDEX idx_client      ON printlog_matriz_sp (client);
+CREATE INDEX idx_eventid     ON printlog_matriz_sp (eventid);
 ```
+
+> Ao criar novas unidades, basta repetir a criação de índices substituindo `printlog_matriz_sp` pelo nome da tabela correspondente (ou deixar que apenas o script crie as tabelas e você crie os índices depois, se necessário).
 
 ---
 
@@ -118,7 +133,7 @@ CREATE INDEX idx_eventid ON printlog (eventid);
 Exemplo de inserção completa:
 
 ```sql
-INSERT INTO printlog (
+INSERT INTO printlog_matriz_sp (
     address,
     pagecount,
     jobbytes,
@@ -129,7 +144,8 @@ INSERT INTO printlog (
     filename,
     user,
     printer,
-    totalpages
+    totalpages,
+    setor
 ) VALUES (
     '10.96.10.45',
     1,
@@ -141,7 +157,8 @@ INSERT INTO printlog (
     'Documento_Teste.pdf',
     'usuario.teste',
     'IMPRESSORA-01',
-    3
+    3,
+    'MATRIZ_SP'
 );
 ```
 

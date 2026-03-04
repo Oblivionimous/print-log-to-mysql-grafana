@@ -153,6 +153,14 @@ O banco de dados armazena os registros de impressão de forma estruturada, permi
 
 A modelagem pode ser ajustada conforme a necessidade do ambiente.
 
+No modelo atual do script:
+
+- Existe um **banco único** (ex.: `printlog`);
+- Para **cada unidade/setor** é criada automaticamente uma tabela no formato `printlog_<setor>` (ex.: `printlog_matriz_sp`, `printlog_rj_filial1`);
+- Cada tabela possui uma coluna `setor` indicando a unidade à qual aquele registro pertence.
+
+Isso permite isolar os dados por unidade e, se necessário, criar **views consolidadas** para relatórios globais.
+
 <img width="726" height="682" alt="image" src="https://github.com/user-attachments/assets/2ce24437-c4ea-4aad-aa4a-41aca749a74d" />
 
 ---
